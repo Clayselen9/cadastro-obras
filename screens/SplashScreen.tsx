@@ -8,8 +8,8 @@ export default function SplashScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('Home');  // navega pra Home após 2 segundos
-    }, 2000);
+      navigation.replace('Home');  // navega pra Home após 5 segundos
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 500,
+    height: 500,
     resizeMode: 'contain',
   },
 });

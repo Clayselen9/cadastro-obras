@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Alert,
-  Platform,
+  View, Text, TextInput, Button, StyleSheet, Image, ScrollView, Alert, Platform,
 } from 'react-native';
 
-import { Picker } from '@react-native-picker/picker'; // Import corrigido
+import { Picker } from '@react-native-picker/picker';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
@@ -79,65 +71,55 @@ export default function CadastroFiscalizacao({ navigation }) {
   }
 
   async function tirarFoto() {
-  const { status } = await ImagePicker.requestCameraPermissionsAsync();
-  if (status !== 'granted') {
-    Alert.alert('Permissão necessária', 'Permissão de câmera é necessária para tirar foto.');
-    return;
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permissão necessária', 'Permissão de câmera é necessária para tirar foto.');
+      return;
+    }
+
+    let result = await ImagePicker.launchCameraAsync({
+      quality: 0.7,
+      base64: false,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setFotoUri(result.assets[0].uri);
+    }
   }
-
-  let result = await ImagePicker.launchCameraAsync({
-    quality: 0.7,
-    base64: false,
-  });
-
-  if (!result.canceled && result.assets && result.assets.length > 0) {
-    setFotoUri(result.assets[0].uri); // ✅ Aqui está o caminho correto da imagem
-  }
-}
-
 
   async function salvarFiscalizacao() {
-  if (!obraSelecionada) {
-    Alert.alert('Erro', 'Selecione uma obra');
-    return;
+    if (!obraSelecionada) {
+      Alert.alert('Erro', 'Selecione uma obra');
+      return;
+    }
+
+    const novaFiscalizacao: Fiscalizacao = {
+      id: Date.now().toString(),
+      obraId: obraSelecionada,
+      data: data.toISOString(),
+      status,
+      observacoes,
+      fotoUri,
+      localizacao,
+    };
+
+    try {
+      const fiscalizacoesSalvasRaw = await AsyncStorage.getItem('fiscalizacoes');
+      let fiscalizacoesSalvas: Fiscalizacao[] = fiscalizacoesSalvasRaw
+        ? JSON.parse(fiscalizacoesSalvasRaw)
+        : [];
+
+      fiscalizacoesSalvas.push(novaFiscalizacao);
+
+      await AsyncStorage.setItem('fiscalizacoes', JSON.stringify(fiscalizacoesSalvas));
+
+      Alert.alert('Sucesso', 'Fiscalização salva com sucesso!');
+      navigation.goBack();
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível salvar a fiscalização');
+      console.error('Erro ao salvar fiscalização:', error);
+    }
   }
-
-  const novaFiscalizacao: Fiscalizacao = {
-    id: Date.now().toString(), // ID único baseado no timestamp
-    obraId: obraSelecionada,
-    data: data.toISOString(),
-    status,
-    observacoes,
-    fotoUri,           // Foto URI vem direto do estado setado por ImagePicker
-    localizacao,       // Localização já deve estar no estado
-  };
-
-  // ✅ Verificações de debug (opcional)
-  console.log('Nova fiscalização criada:', novaFiscalizacao);
-  console.log('Foto URI salva:', fotoUri);
-  console.log('Localização:', localizacao);
-
-  try {
-    // Recupera fiscalizações já salvas
-    const fiscalizacoesSalvasRaw = await AsyncStorage.getItem('fiscalizacoes');
-    let fiscalizacoesSalvas: Fiscalizacao[] = fiscalizacoesSalvasRaw
-      ? JSON.parse(fiscalizacoesSalvasRaw)
-      : [];
-
-    // Adiciona a nova fiscalização
-    fiscalizacoesSalvas.push(novaFiscalizacao);
-
-    // Salva de volta no AsyncStorage
-    await AsyncStorage.setItem('fiscalizacoes', JSON.stringify(fiscalizacoesSalvas));
-
-    Alert.alert('Sucesso', 'Fiscalização salva com sucesso!');
-    navigation.goBack(); // Retorna para tela anterior
-  } catch (error) {
-    Alert.alert('Erro', 'Não foi possível salvar a fiscalização');
-    console.error('Erro ao salvar fiscalização:', error); // Log útil
-  }
-}
-
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -147,6 +129,7 @@ export default function CadastroFiscalizacao({ navigation }) {
           selectedValue={obraSelecionada}
           onValueChange={(itemValue) => setObraSelecionada(itemValue)}
           style={styles.picker}
+          itemStyle={styles.pickerItem}
         >
           {obras.map((obra) => (
             <Picker.Item key={obra.id} label={obra.nome} value={obra.id} />
@@ -174,6 +157,7 @@ export default function CadastroFiscalizacao({ navigation }) {
           selectedValue={status}
           onValueChange={(itemValue) => setStatus(itemValue)}
           style={styles.picker}
+          itemStyle={styles.pickerItem}
         >
           <Picker.Item label="Em dia" value="Em dia" />
           <Picker.Item label="Atrasada" value="Atrasada" />
@@ -223,9 +207,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#999',
     borderRadius: 6,
+    marginBottom: 10,
   },
   picker: {
-    height: 40,
+    height: 60, // aumentada
+    paddingHorizontal: 8,
+  },
+  pickerItem: {
+    fontSize: 16, // tamanho da fonte ajustado
   },
   imagem: {
     marginTop: 10,

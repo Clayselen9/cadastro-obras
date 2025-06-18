@@ -15,7 +15,7 @@ export default function CadastroObra() {
   const [localizacao, setLocalizacao] = useState<null | { latitude: number; longitude: number }>(null);
   const [imagem, setImagem] = useState<string | null>(null);
 
-  // ✅ Função localização via GPS
+  // localização de GPS
   const obterLocalizacao = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -30,7 +30,7 @@ export default function CadastroObra() {
     });
   };
 
-  // ✅ Função para tirar foto com a câmera
+  // tirar foto com a câmera
   const tirarFoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
@@ -49,7 +49,7 @@ export default function CadastroObra() {
     }
   };
 
-  // ✅ Função para salvar a obra localmente
+  //salvar a obra localmente
   const salvarObra = async () => {
     if (!nome || !responsavel) {
       Alert.alert('Atenção', 'Preencha os campos obrigatórios.');

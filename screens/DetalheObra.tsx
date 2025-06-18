@@ -46,7 +46,7 @@ export default function DetalheObra({ route }) {
     carregarFiscalizacoes();
   }, [obra.id]);
 
-  // Função para excluir obra e fiscalizações relacionadas
+  //excluir obra e fiscalizações relacionadas
   async function handleExcluirObra() {
     Alert.alert('Confirmar exclusão', 'Deseja realmente excluir esta obra?', [
       { text: 'Cancelar', style: 'cancel' },
@@ -79,7 +79,7 @@ export default function DetalheObra({ route }) {
     ]);
   }
 
-  // Função para enviar dados da obra e fiscalizações por e-mail
+  //enviar dados da obra e fiscalizações por e-mail
   function handleEnviarPorEmail() {
     let corpo = `Dados da Obra:\n`;
     corpo += `Nome: ${obra.nome}\n`;

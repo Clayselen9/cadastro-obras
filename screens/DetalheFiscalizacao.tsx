@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function DetalheFiscalizacao({ route }) {
   const { fiscalizacao } = route.params;
+  const navigation = useNavigation();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -18,7 +20,11 @@ export default function DetalheFiscalizacao({ route }) {
       {fiscalizacao.fotoUri && (
         <>
           <Text style={styles.label}>Foto:</Text>
-          <Image source={{ uri: fiscalizacao.fotoUri }} style={styles.foto} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('VisualizarImagem', { uri: fiscalizacao.fotoUri })}
+          >
+            <Image source={{ uri: fiscalizacao.fotoUri }} style={styles.foto} />
+          </TouchableOpacity>
         </>
       )}
     </ScrollView>

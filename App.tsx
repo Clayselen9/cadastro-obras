@@ -8,6 +8,7 @@ import DetalheObra from './screens/DetalheObra';
 import CadastroFiscalizacao from './screens/CadastroFiscalizacao';
 import DetalheFiscalizacao from './screens/DetalheFiscalizacao';
 import EditarObra from './screens/EditarObra';
+import VisualizarImagem from './screens/VisualizarImagem';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="EditarObra" component={EditarObra} />
         <Stack.Screen name="CadastroFiscalizacao" component={CadastroFiscalizacao} />
          <Stack.Screen name="DetalheFiscalizacao" component={DetalheFiscalizacao} options={{ title: 'Detalhe da Fiscalização' }}/>
+         <Stack.Screen name="VisualizarImagem" component={VisualizarImagem} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

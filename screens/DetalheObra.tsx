@@ -46,7 +46,6 @@ export default function DetalheObra({ route }) {
     carregarFiscalizacoes();
   }, [obra.id]);
 
-  //excluir obra e fiscalizações relacionadas
   async function handleExcluirObra() {
     Alert.alert('Confirmar exclusão', 'Deseja realmente excluir esta obra?', [
       { text: 'Cancelar', style: 'cancel' },
@@ -55,13 +54,11 @@ export default function DetalheObra({ route }) {
         style: 'destructive',
         onPress: async () => {
           try {
-            // Excluir obra
             const obrasRaw = await AsyncStorage.getItem('obras');
             const obras = obrasRaw ? JSON.parse(obrasRaw) : [];
             const novasObras = obras.filter((o: any) => o.id !== obra.id);
             await AsyncStorage.setItem('obras', JSON.stringify(novasObras));
 
-            // Excluir fiscalizações da obra
             const fiscalizacoesRaw = await AsyncStorage.getItem('fiscalizacoes');
             const fiscalizacoesAll = fiscalizacoesRaw ? JSON.parse(fiscalizacoesRaw) : [];
             const novasFiscalizacoes = fiscalizacoesAll.filter(
@@ -79,7 +76,6 @@ export default function DetalheObra({ route }) {
     ]);
   }
 
-  //enviar dados da obra e fiscalizações por e-mail
   function handleEnviarPorEmail() {
     let corpo = `Dados da Obra:\n`;
     corpo += `Nome: ${obra.nome}\n`;
@@ -100,7 +96,7 @@ export default function DetalheObra({ route }) {
       });
     }
 
-    const email = ''; // deixamos vazio para o usuário preencher no app de e-mail
+    const email = '';
     const assunto = `Relatório da obra: ${obra.nome}`;
     const mailto = `mailto:${email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
 
@@ -133,7 +129,11 @@ export default function DetalheObra({ route }) {
       )}
 
       {obra.imagem && (
-        <Image source={{ uri: obra.imagem }} style={styles.imagem} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('VisualizarImagem', { uri: obra.imagem })}
+        >
+          <Image source={{ uri: obra.imagem }} style={styles.imagem} resizeMode="cover" />
+        </TouchableOpacity>
       )}
 
       <View style={{ marginTop: 20 }}>
@@ -146,7 +146,6 @@ export default function DetalheObra({ route }) {
         />
       </View>
 
-      {/* Novos botões */}
       <View style={{ marginTop: 30 }}>
         <Button
           title="Editar Obra"

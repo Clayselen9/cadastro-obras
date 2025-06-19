@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, TextInput, Button, StyleSheet, Image, ScrollView, Alert, Platform,
+  View, Text, TextInput, Button, StyleSheet, Image, ScrollView, Alert,
 } from 'react-native';
-
 import { Picker } from '@react-native-picker/picker';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
@@ -28,9 +26,10 @@ interface Fiscalizacao {
   };
 }
 
-export default function CadastroFiscalizacao({ navigation }) {
+export default function CadastroFiscalizacao({ route, navigation }) {
+  const { obraId } = route.params;
   const [obras, setObras] = useState<Obra[]>([]);
-  const [obraSelecionada, setObraSelecionada] = useState<string>('');
+  const [obraSelecionada, setObraSelecionada] = useState<string>(obraId);
   const [data, setData] = useState(new Date());
   const [mostrarDatePicker, setMostrarDatePicker] = useState(false);
   const [status, setStatus] = useState<'Em dia' | 'Atrasada' | 'Parada'>('Em dia');
@@ -49,7 +48,6 @@ export default function CadastroFiscalizacao({ navigation }) {
       if (obrasSalvas) {
         const lista: Obra[] = JSON.parse(obrasSalvas);
         setObras(lista);
-        if (lista.length > 0) setObraSelecionada(lista[0].id);
       }
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível carregar as obras');
@@ -89,7 +87,7 @@ export default function CadastroFiscalizacao({ navigation }) {
 
   async function salvarFiscalizacao() {
     if (!obraSelecionada) {
-      Alert.alert('Erro', 'Selecione uma obra');
+      Alert.alert('Erro', 'Obra não selecionada');
       return;
     }
 
@@ -128,6 +126,7 @@ export default function CadastroFiscalizacao({ navigation }) {
         <Picker
           selectedValue={obraSelecionada}
           onValueChange={(itemValue) => setObraSelecionada(itemValue)}
+          enabled={false} // desabilita edição
           style={styles.picker}
           itemStyle={styles.pickerItem}
         >
@@ -210,11 +209,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   picker: {
-    height: 60, // aumentada
+    height: 60,
     paddingHorizontal: 8,
   },
   pickerItem: {
-    fontSize: 16, // tamanho da fonte ajustado
+    fontSize: 16,
   },
   imagem: {
     marginTop: 10,
